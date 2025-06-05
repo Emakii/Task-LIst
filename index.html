@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Task List</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      padding: 20px;
+      background-color: #eef2f3;
+    }
+    h1 {
+      text-align: center;
+      color: #333;
+    }
+    .input-container {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 20px;
+      gap: 10px;
+    }
+    input[type="text"], select {
+      padding: 8px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      width: 200px;
+    }
+    button {
+      padding: 8px 12px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+    button:hover {
+      background-color: #45a049;
+    }
+    ul {
+      list-style-type: none;
+      padding: 0;
+      max-width: 500px;
+      margin: auto;
+    }
+    li {
+      background-color: white;
+      margin-bottom: 10px;
+      padding: 15px;
+      border-radius: 8px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+    .completed {
+      text-decoration: line-through;
+      color: gray;
+    }
+    .priority-low {
+      color: green;
+    }
+    .priority-medium {
+      color: orange;
+    }
+    .priority-high {
+      color: red;
+    }
+    .task-title {
+      display: flex;
+      flex-direction: column;
+    }
+    .task-meta {
+      font-size: 0.8em;
+      opacity: 0.7;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>📝 My Task List</h1>
+
+  <div class="input-container">
+    <input type="text" id="newTask" placeholder="What do you need to do?">
+    <select id="taskPriority">
+      <option value="low">Low Priority</option>
+      <option value="medium">Medium Priority</option>
+      <option value="high">High Priority</option>
+    </select>
+    <button onclick="addTask()">Add Task</button>
+  </div>
+
+  <ul id="taskList"></ul>
+
+  <script>
+    let tasks = [
+      { id: 1, title: 'Buy groceries', completed: false, priority: 'medium' },
+      { id: 2, title: 'Read a book', completed: true, priority: 'low' }
+    ];
+
+    function renderTasks() {
+      const list = document.getElementById('taskList');
+      list.innerHTML = '';
+      tasks.forEach(task => {
+        const li = document.createElement('li');
+        li.innerHTML = `
+          <div class="task-title">
+            <span class="${task.completed ? 'completed' : ''} priority-${task.priority}">
+              ${task.title}
+            </span>
+            <span class="task-meta">Priority: ${task.priority.charAt(0).toUpperCase() + task.priority.slice(1)}</span>
+          </div>
+          <div>
+            <button onclick="toggleComplete(${task.id})">${task.completed ? 'Undo' : 'Complete'}</button>
+            <button style="background-color: #e74c3c;" onclick="deleteTask(${task.id})">Delete</button>
+          </div>
+        `;
+        list.appendChild(li);
+      });
+    }
+
+    function addTask() {
+      const input = document.getElementById('newTask');
+      const priority = document.getElementById('taskPriority').value;
+      const title = input.value.trim();
+      if (title === '') return alert('Please enter a task name!');
+      tasks.push({ id: Date.now(), title, completed: false, priority });
+      input.value = '';
+      renderTasks();
+    }
+
+    function toggleComplete(id) {
+      tasks = tasks.map(t =>
+        t.id === id ? { ...t, completed: !t.completed } : t
+      );
+      renderTasks();
+    }
+
+    function deleteTask(id) {
+      if (confirm('Are you sure you want to delete this task?')) {
+        tasks = tasks.filter(t => t.id !== id);
+        renderTasks();
+      }
+    }
+
+    renderTasks();
+  </script>
+
+</body>
+</html>
